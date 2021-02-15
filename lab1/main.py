@@ -1,20 +1,15 @@
+import threading
 import numpy
 import random
 import sys
 import argparse
 import time
 import multiprocessing
+from functools import reduce
 
 
-def transpose_matrix(matrix):
-    new_matrix = numpy.empty((matrix.shape[1], matrix.shape[0]), dtype=int)
-    for i in range(0, matrix.shape[1]):
-        for j in range(0, matrix.shape[0]):
-            new_matrix[i][j] = matrix[j][i]
-    return new_matrix
-
-
-def calculate_matrix(start_index, size, first_matrix, second_matrix, result_matrix):
+def calculate_matrix(info):
+    start_index, size, first_matrix, second_matrix, result_matrix = info
     print("Thread lol")
     for i in range(size):
         shape = result_matrix.shape
@@ -24,6 +19,9 @@ def calculate_matrix(start_index, size, first_matrix, second_matrix, result_matr
         for j in range(len(first_matrix[row])):
             summa += first_matrix[row][j] * second_matrix[col][j]
         result_matrix[row][col] = summa
+    print(result_matrix)
+    return result_matrix
+
 
 
 def create_parser():
@@ -32,21 +30,11 @@ def create_parser():
     parser.add_argument('-s', '--sizes', nargs='+', default=[0, 0, 0])
     return parser
 
-
-def create_matrix(n, m, is_empty):
-    arr = numpy.empty((n, m), dtype=int)
-    if not is_empty:
-        for i in range(0, n):
-            for j in range(0, m):
-                arr[i][j] = random.randint(0, 10)
-    return arr
-
-
-def separate_data(count, n, L):
-    size = n * L // count
+def separate_data(count, n, l):
+    size = n * l // count
     indexs = []
     sizes = []
-    ost = n * L - size * count
+    ost = n * l - size * count
     index = 0
     for i in range(count):
         if ost > 0:
@@ -62,36 +50,52 @@ def separate_data(count, n, L):
 def main():
     parser = create_parser()
     namespace = parser.parse_args(sys.argv[1:])
+    # n&m - sizes of matrix A, m & l -sizes of matrix B
 
     n = int(namespace.sizes[0])
     m = int(namespace.sizes[1])
-    L = int(namespace.sizes[2])
+    l = int(namespace.sizes[2])
     count_threads = int(namespace.threads)
-    first_matrix = create_matrix(n, m, False)
-    second_matrix = create_matrix(m, L, False)
-    result_matrix = create_matrix(n, L, True)
+    first_matrix = numpy.random.randint(low=0, high=10, size=(n, m), dtype=int)
+    second_matrix = numpy.random.randint(low=0, high=10, size=(m, l), dtype=int)
+    result_matrix = numpy.zeros(shape=(n,l), dtype=int)
     print(first_matrix)
     print()
     print(second_matrix)
-    transpose_second_matrix = transpose_matrix(second_matrix)
+    transpose_second_matrix = numpy.transpose(second_matrix)
     print()
     print(transpose_second_matrix)
     print()
-    procceses = []
-    indexs, sizes = separate_data(count_threads, n, L)
-    start_time = time.time()
+    #print(result_matrix)
+    threads = []
+    indexs, sizes = separate_data(count_threads, n, l)
+    # first_rows = []
+    # second_rows = []
+    # for i in range(count_threads):
+    #     first_rows.append([])
+    #     second_rows.append([])
+    #     for j in range(indexs[i] // n, (indexs[i] + sizes[i]) // n):
+    #         first_rows[i].append(first_matrix[j])
+    #     for k in range(indexs[i] % l, (indexs[i] + sizes[i]) % l):
+    #         second_rows[i].append(second_matrix[k])
+    info = []
     for i in range(count_threads):
-        process = multiprocessing.Process(target=calculate_matrix,
-                                  args=(indexs[i], sizes[i], first_matrix, transpose_second_matrix, result_matrix))
-        procceses.append(process)
-        process.start()
-        #calculate_matrix(indexs[i], sizes[i], first_matrix, transpose_second_matrix, result_matrix)
-    for process in procceses:
-        process.join()
-    print(indexs)
-    print(sizes)
-    print()
+        info.append([indexs[i], sizes[i], first_matrix, transpose_second_matrix, result_matrix])
+    start_time = time.time()
+    # for i in range(count_threads):
+    #     thread = multiprocessing.Process(target=calculate_matrix,
+    #                               args=(indexs[i], sizes[i], first_matrix, transpose_second_matrix, result_matrix))
+    #     threads.append(thread)
+    #     thread.start()
+    # for thread in threads:
+    #     thread.join()
+    pool = multiprocessing.Pool(processes=count_threads)
+    auf = reduce(lambda a, b: a + b, pool.map(calculate_matrix, info))
+    print('result:')
     print(result_matrix)
+    print('auf:')
+    print(auf)
+
     print('seconds: ' + str(time.time() - start_time))
 
 if __name__ == "__main__":
