@@ -45,11 +45,19 @@ def separate_data(count, row_count, column_count):
 
 
 def parallel_matrix_multiplication(processes_count, first_matrix, second_matrix):
+    if type(processes_count) != int:
+        raise TypeError("'processes_count' must be int, not {}".format(type(processes_count)))
+    if processes_count < 1:
+        raise ValueError("'processes_count' must be positive number")
     transpose_second_matrix = numpy.transpose(second_matrix)
+    n = first_matrix.shape[0]
+    L = second_matrix.shape[1]
     indexes, sizes = separate_data(count=processes_count, row_count=n, column_count=L)
     info = [[indexes[i], sizes[i], first_matrix, transpose_second_matrix] for i in range(processes_count)]
     pool = multiprocessing.Pool(processes=processes_count)
-    return reduce(lambda a, b: numpy.concatenate([a, b]), pool.map(calculate_matrix, info)).reshape((n, L))
+    result_matrix = reduce(lambda a, b: numpy.concatenate([a, b]), pool.map(calculate_matrix, info)).reshape((n, L))
+    pool.close()
+    return result_matrix
 
 
 if __name__ == "__main__":
