@@ -1,9 +1,10 @@
-import numpy
-import sys
 import argparse
-import time
 import multiprocessing
+import sys
+import time
 from functools import reduce
+
+import numpy
 
 
 def create_parser():

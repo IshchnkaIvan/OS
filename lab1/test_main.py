@@ -15,7 +15,8 @@ class Test(TestCase):
                          first_matrix.dot(second_matrix).tolist())
 
     def test_parallel_matrix_multiplication_types(self):
-        self.assertRaises(TypeError, parallel_matrix_multiplication, 1.1, [[1, 2]], [[1], [2]])
+        self.assertRaises(TypeError, parallel_matrix_multiplication, 1.1, numpy.array([[1, 2]]),
+                          numpy.array([[1], [2]]))
 
     def test_parallel_matrix_multiplication_values(self):
-        self.assertRaises(ValueError, parallel_matrix_multiplication, 0, [[5, 1]], [[5]])
+        self.assertRaises(ValueError, parallel_matrix_multiplication, 0, numpy.array([[5, 1]]), numpy.array([[5]]))
