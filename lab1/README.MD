@@ -2,6 +2,10 @@
 
 13 группа: Белевич Михаил, Ищенко Иван.
 
+# Requirements:
+
+* pip install multiprocess
+
 # Execution
 
 ## To execute main program use command line and parameters:
