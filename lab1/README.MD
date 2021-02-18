@@ -11,7 +11,8 @@
 ## To execute main program use command line and parameters:
 
 * -t <number_of_threads>
-* -s <L M N>
+
+* -s <l m n>
 
 ### Example:
 
