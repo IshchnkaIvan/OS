@@ -7,14 +7,14 @@ from functools import reduce
 import numpy
 
 
-def create_parser():
+def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--threads', nargs='?', default=1)
+    parser.add_argument('-t', '--threads', nargs='?', default=1,type=int)
     parser.add_argument('-s', '--sizes', nargs='+', default=[0, 0, 0])
     return parser
 
 
-def calculate_matrix(info):
+def calculate_matrix(info: tuple) -> numpy.array:
     start_index, size, first_matrix, second_matrix = info
     part_of_result_matrix = numpy.zeros((first_matrix.shape[0], second_matrix.shape[0]), dtype=int)
     for i in range(size):
@@ -28,7 +28,7 @@ def calculate_matrix(info):
     return part_of_result_matrix.flatten()[start_index:start_index + size]
 
 
-def separate_data(count, row_count, column_count):
+def separate_data(count: int, row_count: int, column_count: int) -> tuple:
     size = row_count * column_count // count
     indexes = []
     sizes = []
@@ -45,7 +45,8 @@ def separate_data(count, row_count, column_count):
     return indexes, sizes
 
 
-def parallel_matrix_multiplication(processes_count, first_matrix, second_matrix):
+def parallel_matrix_multiplication(processes_count: int, first_matrix: numpy.array,
+                                   second_matrix: numpy.array) -> numpy.array:
     if type(processes_count) != int:
         raise TypeError("'processes_count' must be int, not {}".format(type(processes_count)))
     if processes_count < 1:
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     n = int(namespace.sizes[0])
     m = int(namespace.sizes[1])
     L = int(namespace.sizes[2])
-    processes_count = int(namespace.threads)
+    processes_count = namespace.threads
     first_matrix = numpy.random.randint(low=0, high=10, size=(n, m), dtype=int)
     second_matrix = numpy.random.randint(low=0, high=10, size=(m, L), dtype=int)
     start_time = time.time()
