@@ -1,17 +1,6 @@
-import argparse
 import multiprocessing
-import sys
-import time
 from functools import reduce
-
 import numpy
-
-
-def create_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--threads', nargs='?', default=1,type=int)
-    parser.add_argument('-s', '--sizes', nargs='+', default=[0, 0, 0])
-    return parser
 
 
 def calculate_matrix(info: tuple) -> numpy.array:
@@ -28,7 +17,7 @@ def calculate_matrix(info: tuple) -> numpy.array:
     return part_of_result_matrix.flatten()[start_index:start_index + size]
 
 
-def separate_data(count: int, row_count: int, column_count: int) -> tuple:
+def separate_data(count: int, row_count: int, column_count: int) -> tuple[int]:
     size = row_count * column_count // count
     indexes = []
     sizes = []
@@ -60,19 +49,3 @@ def parallel_matrix_multiplication(processes_count: int, first_matrix: numpy.arr
     result_matrix = reduce(lambda a, b: numpy.concatenate([a, b]), pool.map(calculate_matrix, info)).reshape((n, L))
     pool.close()
     return result_matrix
-
-
-if __name__ == "__main__":
-    parser = create_parser()
-    namespace = parser.parse_args(sys.argv[1:])
-    # n&m - sizes of matrix A, m & L -sizes of matrix B
-    n = int(namespace.sizes[0])
-    m = int(namespace.sizes[1])
-    L = int(namespace.sizes[2])
-    processes_count = namespace.threads
-    first_matrix = numpy.random.randint(low=0, high=10, size=(n, m), dtype=int)
-    second_matrix = numpy.random.randint(low=0, high=10, size=(m, L), dtype=int)
-    start_time = time.time()
-    result_matrix = parallel_matrix_multiplication(processes_count, first_matrix, second_matrix)
-    print(result_matrix)
-    print('parallel_matrix_multiplication result:  {} second'.format(time.time() - start_time))
