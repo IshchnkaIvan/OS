@@ -36,8 +36,6 @@ def separate_data(count: int, row_count: int, column_count: int) -> tuple[int]:
 
 def parallel_matrix_multiplication(processes_count: int, first_matrix: numpy.array,
                                    second_matrix: numpy.array) -> numpy.array:
-    if type(processes_count) != int:
-        raise TypeError("'processes_count' must be int, not {}".format(type(processes_count)))
     if processes_count < 1:
         raise ValueError("'processes_count' must be positive number")
     transpose_second_matrix = numpy.transpose(second_matrix)
