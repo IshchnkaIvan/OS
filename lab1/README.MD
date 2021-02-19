@@ -4,7 +4,7 @@
 
 # Requirements:
 
-* pip install multiprocess
+* pip install -r requirement.txt
 
 # Execution
 
