@@ -11,20 +11,18 @@ namespace StackTests
     public class StackTests
     {
         BlockingStack<int> stack = new BlockingStack<int>();
-        Stack<int> defaultStack = new Stack<int>();
 
         public void PushElement()
         {
             for (int i = 0; i < 100; i++)
             {
-                //stack.Push(0);
-                defaultStack.Push(0);
+                stack.Push(0);
             }
         }
         [TestMethod]
         public void TestPush()
         {
-            defaultStack.Clear();
+            stack.Clear();
 
             Thread[] threads = new Thread[8];
             for (int i = 0; i < 8; i++)
@@ -36,8 +34,7 @@ namespace StackTests
             {
                 threads[i].Join();
             }
-            //Assert.AreEqual(800, stack.Count);
-            Assert.AreEqual(800, defaultStack.Count);
+            Assert.AreEqual(800, stack.Count);
         }
 
         public void PopElement()
@@ -45,18 +42,15 @@ namespace StackTests
             for (int i = 0; i < 100; i++)
             {
                 stack.TryPop();
-                //defaultStack.Pop();
             }
         }
         [TestMethod]
         public void TestPop()
         {
-            //defaultStack.Clear();
             stack.Clear();
             for (int i = 0; i < 800; i++)
             {
                 stack.Push(0);
-                //defaultStack.Push(0);
             }
             Thread[] threads = new Thread[8];
             for (int i = 0; i < 8; i++)
@@ -69,25 +63,21 @@ namespace StackTests
                 threads[i].Join();
             }
             Assert.AreEqual(0, stack.Count);
-            //Assert.AreEqual(0, defaultStack.Count);
         }
-        public void PopElement()
+        public void ContainsElement()
         {
             for (int i = 0; i < 100; i++)
             {
                 stack.TryPop();
-                //defaultStack.Pop();
             }
         }
         [TestMethod]
-        public void TestPop()
+        public void ContainsPop()
         {
-            //defaultStack.Clear();
             stack.Clear();
             for (int i = 0; i < 800; i++)
             {
                 stack.Push(0);
-                //defaultStack.Push(0);
             }
             Thread[] threads = new Thread[8];
             for (int i = 0; i < 8; i++)
@@ -100,7 +90,6 @@ namespace StackTests
                 threads[i].Join();
             }
             Assert.AreEqual(0, stack.Count);
-            //Assert.AreEqual(0, defaultStack.Count);
         }
     }
 }
