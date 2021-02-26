@@ -13,11 +13,11 @@ class LockingStack:
         return self.items == []
 
     def push(self, item) -> None:
-        with self.lock_object.acquire(blocking=True):
+        with self.lock_object:
             self.items.append(item)
 
     def pop(self) -> object:
-        with self.lock_object.acquire(blocking=True):
+        with self.lock_object:
             return self.items.pop()
 
     def peek(self) -> object:
