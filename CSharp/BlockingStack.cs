@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lab2
+namespace StackTests
 {
     class BlockingStack<T>
     {
@@ -29,28 +29,23 @@ namespace Lab2
             }
         }
 
-        public bool TryPop(out T item)
+        public bool TryPop()
         {
             bool returnValue = true;
             lock (lockObject)
             {
                 if (sequentialStack.Count == 0)
                 {
-                    item = default(T);
                     returnValue = false;
                 }
                 else
                 {
-                    item = sequentialStack.Pop();
+                    sequentialStack.Pop();
                 }
             }
             return returnValue;
         }
 
-        public bool TryTake(out T item)
-        {
-            return TryPop(out item);
-        }
 
         public bool TryAdd(T item)
         {
@@ -69,6 +64,20 @@ namespace Lab2
         public T Peek()
         {
             return sequentialStack.Peek();
+        }
+
+        public bool IsEmpty()
+        {
+            return Count == 0;
+        }
+
+        public bool Contains(T item)
+        {
+            return sequentialStack.Contains(item);
+        }
+        public void Clear()
+        {
+            while (TryPop());
         }
     }
 }
