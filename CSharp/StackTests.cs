@@ -64,32 +64,5 @@ namespace StackTests
             }
             Assert.AreEqual(0, stack.Count);
         }
-        public void ContainsElement()
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                stack.TryPop();
-            }
-        }
-        [TestMethod]
-        public void ContainsPop()
-        {
-            stack.Clear();
-            for (int i = 0; i < 800; i++)
-            {
-                stack.Push(0);
-            }
-            Thread[] threads = new Thread[8];
-            for (int i = 0; i < 8; i++)
-            {
-                threads[i] = new Thread(PopElement);
-                threads[i].Start();
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                threads[i].Join();
-            }
-            Assert.AreEqual(0, stack.Count);
-        }
     }
 }
